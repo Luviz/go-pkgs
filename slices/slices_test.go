@@ -13,7 +13,6 @@ func TestFilterNumb(t *testing.T) {
 	filterRes := slices.Filter(ints, func(v, _ int, _ []int) bool {
 		return v < 5
 	})
-	fmt.Printf("res: %#v", filterRes)
 	for _, v := range filterRes {
 		if v > 5 {
 			t.Fatal(v, "larger then 5")
@@ -33,7 +32,6 @@ func TestFilterString(t *testing.T) {
 	filterRes := slices.Filter(names, func(v string, _ int, _ []string) bool {
 		return strings.Contains(v, "a")
 	})
-	fmt.Printf("res: %#v", filterRes)
 	for _, v := range filterRes {
 		if !strings.Contains(v, "a") {
 			t.Fatal(v, "Dose not contains a")
@@ -53,12 +51,50 @@ func TestZip(t *testing.T) {
 	}
 
 	nameVal := slices.Zip(names, values)
-	fmt.Printf("%v", nameVal)
 	min_len := min(len(values), len(names))
 	for ix := 0; ix < min_len; ix++ {
 		if nameVal[ix].First != names[ix] || nameVal[ix].Second != values[ix] {
 			fmt.Println(nameVal[ix], names[ix], values[ix])
 			t.Fail()
 		}
+	}
+}
+
+type TestMapOut struct {
+	name, altName string
+	ix            int
+}
+
+func TestMap(t *testing.T) {
+	changeName := func(s string) string {
+		return strings.ReplaceAll(strings.ToLower(s), "a", "_")
+	}
+
+	names := []string{
+		"Albert",
+		"Betty",
+		"Casey",
+		"Danny",
+		"Eddie",
+		"Freddy",
+	}
+	tmo := slices.Map(names, func(n string, ix int, _ []string) TestMapOut {
+		return TestMapOut{name: n, ix: ix, altName: changeName(n)}
+	})
+
+	if len(tmo) != len(names) {
+		fmt.Println(tmo)
+		t.Fail()
+	}
+
+	for ix, v := range tmo {
+		orgName := names[ix]
+		altName := changeName(orgName)
+
+		if v.name != orgName || v.altName == altName && v.ix == ix {
+			continue
+		}
+		fmt.Println(ix, v)
+		t.Fail()
 	}
 }
