@@ -1,4 +1,4 @@
-package test_test
+package slices_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/luviz/go-pkgs/slices"
 )
 
-func TestFilterNumbers(t *testing.T) {
+func TestFilterNumb(t *testing.T) {
 	ints := []int{1, 3, 2, 4, 5, 2, 1, 6, 2, 8, 2, 9, 0, 8, 7}
 	filterRes := slices.Filter(ints, func(v, _ int, _ []int) bool {
 		return v < 5
@@ -37,6 +37,28 @@ func TestFilterString(t *testing.T) {
 	for _, v := range filterRes {
 		if !strings.Contains(v, "a") {
 			t.Fatal(v, "Dose not contains a")
+		}
+	}
+}
+
+func TestZip(t *testing.T) {
+	values := []int{1, 3, 2, 4, 5, 2, 1, 6, 2, 8, 2, 9, 0, 8, 7}
+	names := []string{
+		"Albert",
+		"Betty",
+		"Casey",
+		"Danny",
+		"Eddie",
+		"Freddy",
+	}
+
+	nameVal := slices.Zip(names, values)
+	fmt.Printf("%v", nameVal)
+	min_len := min(len(values), len(names))
+	for ix := 0; ix < min_len; ix++ {
+		if nameVal[ix].First != names[ix] || nameVal[ix].Second != values[ix] {
+			fmt.Println(nameVal[ix], names[ix], values[ix])
+			t.Fail()
 		}
 	}
 }
